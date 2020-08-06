@@ -7,15 +7,18 @@
 //
 
 import UIKit
+import CoreData
 
 class TodoListViewController: UITableViewController {
 
     var itemArray = [Item]()
     
-    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
+    let contesxt = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
 
         loadItems()
     }
@@ -60,9 +63,12 @@ class TodoListViewController: UITableViewController {
             // what wil happend once the user clicks on the add item button
             if let textFieldText = textField.text {
                 
-                let newItem = Item()
+                
+                
+                let newItem = Item(context: self.contesxt)
                 
                 newItem.title = textFieldText
+                newItem.done = false
                 
                 self.itemArray.append(newItem)
                 
@@ -83,27 +89,23 @@ class TodoListViewController: UITableViewController {
     //MARK: - Model manipulation methods
 
     func saveItems() {
-        let encoder = PropertyListEncoder()
+        
         
         do {
-            let data = try encoder.encode(itemArray)
-            try data.write(to: dataFilePath!)
+            try self.contesxt.save()
         } catch {
-            print(error)
+            print("error saving context \(error)")
         }
         
         self.tableView.reloadData()
     }
     
     func loadItems() {
-        if let data = try? Data(contentsOf: dataFilePath!) {
-            let decoder = PropertyListDecoder()
-            
-            do {
-                itemArray = try decoder.decode([Item].self, from: data)
-            } catch {
-                print(error)
-            }
+        let request: NSFetchRequest<Item> = Item.fetchRequest()
+        do {
+            itemArray = try self.contesxt.fetch(request)
+        } catch {
+            print("error fetching date from context \(error)")
         }
     }
 
