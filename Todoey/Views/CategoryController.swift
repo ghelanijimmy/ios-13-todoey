@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-class CategoryController: UITableViewController {
+class CategoryController: SwipeTableViewController {
     
     let realm = try! Realm()
     
@@ -22,16 +22,16 @@ class CategoryController: UITableViewController {
 
     }
 
-
-
     
     //MARK: - TableView Datasource Methods
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return categories?.count ?? 1
     }
     
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
+        
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         
         let category = categories?[indexPath.row]
         
@@ -71,6 +71,19 @@ class CategoryController: UITableViewController {
         categories = realm.objects(Category.self)
         
         tableView.reloadData()
+    }
+    
+    //MARK: - Delete date from swipe
+    override func updateModel(at indexPath: IndexPath) {
+        if let categoryForDeletion = self.categories?[indexPath.row] {
+            do {
+                try self.realm.write {
+                    self.realm.delete(categoryForDeletion)
+                }
+            } catch {
+                print("Could not delete category \(error)")
+            }
+        }
     }
     
     //MARK: - Add New Categories
