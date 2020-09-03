@@ -29,7 +29,11 @@ class CategoryController: SwipeTableViewController {
         guard let navBar = navigationController?.navigationBar else {fatalError("Nav controller does not exist")}
         
         navBar.backgroundColor = UIColor(hexString: "#1d9bf6")
-        navBar.barTintColor = UIColor(hexString: "#1d9bf6")
+        
+        let app = UINavigationBarAppearance()
+        
+        app.backgroundColor = UIColor(hexString: "#1d9bf6")
+        navBar.scrollEdgeAppearance = app
     }
 
     
