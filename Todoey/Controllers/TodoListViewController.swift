@@ -51,6 +51,7 @@ class TodoListViewController: SwipeTableViewController {
                 
                 app.backgroundColor = navBarColour
                 navBar.scrollEdgeAppearance = app
+                navBar.standardAppearance = app
             }
             
         }
